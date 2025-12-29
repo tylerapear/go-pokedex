@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"os"
 	"bufio"
+	"time"
+
+	"github.com/tylerapear/go-pokedex/internal/pokeapi"
 )
 
 type config struct {
-	Next 		string
-	Previous 	string
+	pokeapiClient 			pokeapi.Client
+	nextLocationsURL 		*string
+	previousLocationsURL 	*string
 }
 
 type cliCommand struct {
@@ -24,8 +28,7 @@ var commands map[string]cliCommand
 func main() {
 
 	config := &config{
-		Next: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
-		Previous: "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
+		pokeapiClient: pokeapi.NewClient(5 * time.Second),
 	}
 
 	commands = map[string]cliCommand {
@@ -33,44 +36,48 @@ func main() {
 			name: "exit",
 			description: "Exit the Pokedex",
 			callback: commandExit,
-			config: config,
 		},
 		"help": {
 			name: "help",
 			description: "Display help message",
 			callback: commandHelp,
-			config: config,
 		},
 		"map": {
 			name: "map",
 			description: "Display next page of map information",
 			callback: commandMapf,
-			config: config,
 		},
 		"mapb": {
 			name: "mapb",
 			description: "Display previous page of map information",
 			callback: commandMapb,
-			config: config,
 		},
 	}
 	
 	scanner := bufio.NewScanner(os.Stdin)
 
-	for ; ; {
+	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		cleanedText := cleanInput(scanner.Text())
+		if len(cleanedText) == 0 {
+			continue
+		}
 
-		command, ok := commands[cleanedText[0]]
-		if !ok {
+		commandName := cleanedText[0]
+
+		command, exists := commands[commandName]
+		if exists {
+			err := command.callback(config)
+			if err != nil {
+				fmt.Println("Error executing command:", err)
+			}
+		} else {
 			fmt.Println("Unknown command")
+			continue
 		}
 
-		err := command.callback(command.config)
-		if err != nil {
-			fmt.Println("Error executing command:", err)
-		}
+		
 	}
 
 }

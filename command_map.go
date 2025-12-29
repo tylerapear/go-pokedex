@@ -1,70 +1,43 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 
 
 func commandMapf(cfg *config) (error) {
 
-	data, err := httpJSONGet(cfg.Next)
+	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
 	if err != nil {
-		return fmt.Errorf("Error fetching map data:", err)
-	}
-	if len(data) == 0 {
-		return fmt.Errorf("No map data found")
+		return err
 	}
 
-	cfg.Next, _ = data[0]["next"].(string)
-	cfg.Previous, _ = data[0]["previous"].(string)
+	cfg.nextLocationsURL = locationsResp.Next
+	cfg.previousLocationsURL = locationsResp.Previous
 
-	fmt.Println(data[0]["next"])
-
-	map_items, ok := data[0]["results"].([]interface{})
-	if !ok {
-		return fmt.Errorf("No results field in map data")
+	for _, loc := range locationsResp.Results {
+		fmt.Println(loc.Name)
 	}
-
-	for _, item := range map_items {
-		m, ok := item.(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("Invalid map item format")
-		}
-		fmt.Println(m["name"])
-	}
-
 	return nil
 }
 
+
 func commandMapb(cfg *config) (error) {
-
-	if cfg.Previous == "" {
-		return fmt.Errorf("You're on the first page")
+	if cfg.previousLocationsURL == nil {
+		return errors.New("you're on the first page")
 	}
 
-	data, err := httpJSONGet(cfg.Previous)
+	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.previousLocationsURL)
 	if err != nil {
-		return fmt.Errorf("Error fetching map data:", err)
-	}
-	if len(data) == 0 {
-		return fmt.Errorf("No map data found")
+		return err
 	}
 
-	cfg.Next, _ = data[0]["next"].(string)
-	cfg.Previous, _ = data[0]["previous"].(string)
+	cfg.nextLocationsURL = locationsResp.Next
+	cfg.previousLocationsURL = locationsResp.Previous
 
-	fmt.Println(data[0]["next"])
-
-	map_items, ok := data[0]["results"].([]interface{})
-	if !ok {
-		return fmt.Errorf("No results field in map data")
+	for _, loc := range locationsResp.Results {
+		fmt.Println(loc.Name)
 	}
-
-	for _, item := range map_items {
-		m, ok := item.(map[string]interface{})
-		if !ok {
-			return fmt.Errorf("Invalid map item format")
-		}
-		fmt.Println(m["name"])
-	}
-
 	return nil
 }
