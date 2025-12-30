@@ -2,12 +2,11 @@ package main
 
 import (
 	"net/http"
-	"encoding/json"
 	"fmt"
+	"io"
 )
 
-func httpJSONGet(url string) ([]map[string]interface{}, error) {
-	var result []map[string]interface{}
+func httpJSONGet(url string) ([]byte, error) {
 
 	res, err := http.Get(url)
 	if err != nil {
@@ -19,27 +18,19 @@ func httpJSONGet(url string) ([]map[string]interface{}, error) {
 		return nil, fmt.Errorf("received non-200 response code: %d", res.StatusCode)
 	}
 
-	var data any
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&data); err != nil {
+	dat, err := io.ReadAll(res.Body)
+	if err != nil {
 		return nil, err
 	}
 
-	switch v := data.(type) {
-	case []any:
-		result = make([]map[string]any, len(v))
-		for i, item := range v {
-			if m, ok := item.(map[string]any); ok {
-				result[i] = m
-			} else {
-				return nil, fmt.Errorf("unexpected item type in arrayse")
-			}
-		}
-	case map[string]any:
-		return []map[string]any{v}, nil
-	default:
-		return nil, fmt.Errorf("unexpected item type in array")
-	}
+	return dat, nil
+}
 
-	return result, nil
+func contains(list []string, target string) bool {
+	for _, item := range list {
+		if item == target {
+			return true
+		}
+	}
+	return false
 }
