@@ -63,6 +63,11 @@ func startRepl(cfg *config) {
 			description: "Attempt to catch a Pokemon. Usage: catch <pokemon_name>",
 			callback: commandCatch,
 		},
+		"pokedex": {
+			name: "pokedex",
+			description: "Show pokemon in your Pokedex",
+			callback: commandPokedex,
+		},
 		"pcache": {
 			name: "pcache",
 			description: "Print out the current PokeCache entries",

@@ -25,8 +25,8 @@ func commandInspect(cfg *config, args []string) error {
 	}
 
 	fmt.Printf("Name: %s\n", pokemonResp.Name)
-	fmt.Printf("Height: %s\n", string(pokemonResp.Height))
-	fmt.Printf("Weight: %s\n", pokemonResp.Weight)
+	fmt.Printf("Height: %d\n", pokemonResp.Height)
+	fmt.Printf("Weight: %d\n", pokemonResp.Weight)
 
 	fmt.Printf("Stats:\n")
 	for _, stat := range pokemonResp.Stats {
