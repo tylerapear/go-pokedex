@@ -62,4 +62,20 @@ type RespShallowPokemon struct {
 	} `json:"moves"`
 	Name		string	`json:"name"`
 	Order		int		`json:"order"`
+	Weight		int		`json:"weight"`
+	Stats		[]struct{
+		Base_Stat	int	`json:"base_stat"`
+		Effort		int	`json:"effort"`
+		Stat		struct{
+			Name string	`json:"name"`
+			URL  string	`json:"url"`
+		} `json:"stat"`
+	} `json:"stats"`
+	Types		[]struct{
+		Slot	int	`json:"slot"`
+		Type	struct{
+			Name string	`json:"name"`
+			URL  string	`json:"url"`
+		} `json:"type"`
+	} `json:"types"`
 }

@@ -53,6 +53,11 @@ func startRepl(cfg *config) {
 			description: "Explore a location and list available Pokemon. Usage: explore <location_name>",
 			callback: commandExplore,
 		},
+		"inspect": {
+			name: "inspect",
+			description: "Inspect a Pokemon from your Pokedex. Usage: inspect <pokemon_name>",
+			callback: commandInspect,
+		},
 		"catch": {
 			name: "catch",
 			description: "Attempt to catch a Pokemon. Usage: catch <pokemon_name>",
