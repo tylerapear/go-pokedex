@@ -52,6 +52,11 @@ func main() {
 			description: "Display previous page of map information",
 			callback: commandMapb,
 		},
+		"explore": {
+			name: "explore",
+			description: "Explore a location and list available Pokemon. Usage: explore <location_name>",
+			callback: commandExplore,
+		},
 		"catch": {
 			name: "catch",
 			description: "Attempt to catch a Pokemon. Usage: catch <pokemon_name>",

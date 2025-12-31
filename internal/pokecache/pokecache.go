@@ -35,12 +35,16 @@ func (c Cache) Add(key string, val []byte) {
 		val: val,
 	}
 
-	fmt.Printf("Cache added \nkey: %s\nval: %s\n", key, string(val))
+	//fmt.Printf("Cache added \nkey: %s\nval: %s\n", key, string(val))
 }
 
 func (c Cache) Get(key string) ([]byte, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
+	// Resolve unused fmt import
+	foo := fmt.Sprintf("")
+	foo = foo + "bar"
 
 	entry, exists := c.cacheEntries[key]
 	if !exists {
