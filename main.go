@@ -9,10 +9,16 @@ import (
 	"github.com/tylerapear/go-pokedex/internal/pokeapi"
 )
 
+type Pokemon struct {
+	Name string
+	Count int
+}
+
 type config struct {
 	pokeapiClient 			pokeapi.Client
 	nextLocationsURL 		*string
 	previousLocationsURL 	*string
+	pokedex 				map[string]Pokemon
 }
 
 type cliCommand struct {
@@ -22,13 +28,13 @@ type cliCommand struct {
 	config 		*config
 }
 
-
 var commands map[string]cliCommand
 
 func main() {
 
 	config := &config{
 		pokeapiClient: pokeapi.NewClient(5 * time.Second),
+		pokedex: make(map[string]Pokemon),
 	}
 
 	commands = map[string]cliCommand {

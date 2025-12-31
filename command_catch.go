@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"encoding/json"
-
-	"github.com/tylerapear/go-pokedex/internal/pokeapi"
+	"math"
+	"math/rand"
 )
 
 func commandCatch(cfg *config, args []string) error {
@@ -13,21 +12,29 @@ func commandCatch(cfg *config, args []string) error {
 		return fmt.Errorf("usage: catch <pokemon_name>")
 	}
 
-	pokemonName := args[0]
-	fmt.Printf("Throwing a Pokeball at %s...\n", pokemonName)
+	pokemonNameStr := args[0]
+	pokemonName := &pokemonNameStr
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemonNameStr)
 
-	dat, err := httpJSONGet(fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%s", pokemonName))
+	pokemonResp, err := cfg.pokeapiClient.GetPokemon(pokemonName)
 	if err != nil {
 		return err
 	}
 
-	pokemonResp := pokeapi.RespShallowPokemon{}
-	err = json.Unmarshal(dat, &pokemonResp)
-	if err != nil {
-		return err
-	}
+	PercentChanceToCatch := float64(1) - (float64(pokemonResp.Base_Experience) / 350)
+	PercentChanceToCatch = math.Round(PercentChanceToCatch * 100) / 100
 
-	fmt.Printf("Congratulations! You caught a %s, with base experience: %d\n", pokemonResp.Name, pokemonResp.Base_Experience)
+	randomNum := rand.Float64()
+
+	if randomNum < PercentChanceToCatch {
+		fmt.Printf("Congratulations! You caught a %s! This was added to your Pokedex.\n", pokemonResp.Name,)
+		cfg.pokedex[pokemonResp.Name] = Pokemon{
+			Name: pokemonResp.Name,
+			Count: cfg.pokedex[pokemonResp.Name].Count + 1,
+		}
+	} else {
+		fmt.Printf("Oh no! The %s broke free!\n", pokemonResp.Name)
+	}
 
 	return nil
 }

@@ -14,7 +14,8 @@ func commandExplore(cfg *config, args []string) (error) {
 
 	locationName := args[0]
 
-	fmt.Printf("Exploring %s:\n", locationName)
+	fmt.Printf("Exploring %s...\n", locationName)
+	fmt.Println("Found Pokemon:")
 
 	urlStr := fmt.Sprintf(locationName)
 	url := &urlStr
